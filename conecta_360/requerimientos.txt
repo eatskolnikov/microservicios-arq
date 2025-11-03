@@ -1,0 +1,191 @@
+Caso: Sistema Integral de Atención Ciudadana “Conecta360”
+1. Contexto general
+El gobierno de
+Costa Verde
+, un país con más de 10 millones de habitantes, desea implementaruna plataforma digital unificada llamada
+Conecta360
+, cuyo propósito es
+centralizar todos loscanales de atención ciudadana
+(teléfono, web, app móvil, redes sociales y ventanilla física).
+Actualmente, cada dependencia (salud, transporte, energía, seguridad ciudadana, serviciosmunicipales, etc.) gestiona sus solicitudes por separado, utilizando sistemas distintos y sininteroperabilidad.
+Esto genera una
+mala experiencia ciudadana
+y una
+ineficiencia administrativa significativa
+.
+El objetivo de
+Conecta360
+es ofrecer una experiencia integrada para que los ciudadanospuedan
+reportar incidencias, solicitar servicios, hacer seguimiento de casos y recibirnotificaciones
+, todo desde un solo portal.
+Tabla de Contenidos
+1. Contexto general
+2. Problemática actual
+2.1 Fragmentación de canales y sistemas
+2.2 Experiencia ciudadana deficiente
+2.3 Inconsistencia en métricas y reportes
+2.4 Integración con servicios existentes
+2.5 Cumplimiento normativo y seguridad
+3. Objetivos del sistema
+4. Requerimientos funcionales
+4.1. Módulo de Atención Ciudadana
+4.2. Módulo de Gestión Institucional
+4.3. Módulo Analítico
+4.4. Integraciones requeridas
+5. Requerimientos no funcionales
+6. Desafíos técnicos y de negocio
+7. Entregables
+7.1. Diagrama de arquitectura detallado
+7.2. Diagrama de base de datos
+7.3. Justificación de decisiones tecnológicas
+7.4. Diseño de APIs RESTful y/o asíncronas
+8. Notas
+9. Referencias útiles
+A su vez, cada dependencia del gobierno podrá gestionar sus casos, medir tiempos derespuesta y mejorar su gestión con base en datos.
+2. Problemática actual
+2.1 Fragmentación de canales y sistemas
+Cada institución utiliza sistemas diferentes, en ocasiones desarrollados de forma local o contecnologías obsoletas.
+Esto genera:
+Duplicación de casos y pérdida de trazabilidad.
+Falta de visibilidad entre dependencias (por ejemplo, una solicitud de alumbrado públicopuede requerir coordinación con energía y obras públicas).
+Procesos manuales para transferir casos de una entidad a otra.
+2.2 Experiencia ciudadana deficiente
+El ciudadano debe repetir sus datos cada vez que contacta a una institución.
+No existe un portal único ni un número de caso universal para seguimiento.
+Tampoco se notifican los avances o cierres de casos de manera oportuna.
+2.3 Inconsistencia en métricas y reportes
+Las dependencias producen informes distintos y no comparables, con metodologías variadas.
+No hay un tablero centralizado que muestre el rendimiento del sistema de atención en suconjunto.
+2.4 Integración con servicios existentes
+Las instituciones ya tienen sistemas internos (p. ej., gestión de mantenimiento, emergencias,facturación), por lo que
+Conecta360
+debe integrarse mediante
+APIs, colas de mensajes obuses de datos
+sin reemplazar completamente los sistemas legados.
+2.5 Cumplimiento normativo y seguridad
+El proyecto debe cumplir con normas de protección de datos personales y ciberseguridadpública, asegurando:
+Trazabilidad total de las operaciones.
+Control de acceso por perfil y rol institucional.
+Cifrado y segregación de datos según las leyes locales.
+3. Objetivos del sistema
+Diseñar una
+plataforma modular, escalable y segura
+, capaz de:
+1.
+Centralizar todos los canales de atención (web, móvil, redes sociales, call center).
+2.
+Gestionar de forma eficiente los casos ciudadanos, con seguimiento en tiempo real.
+3.
+Integrarse con sistemas de información de las diferentes dependencias mediante APIs ymensajería.
+4.
+Proveer dashboards y reportes globales para la alcaldía y los ministerios.
+5.
+Asegurar resiliencia, alta disponibilidad y cumplimiento de normativas.
+4. Requerimientos funcionales
+4.1. Módulo de Atención Ciudadana
+Registro de incidencias y solicitudes (ej. bache en calle, queja, solicitud de documento,reporte de robo).
+Seguimiento del caso mediante número único.
+Notificaciones automáticas (correo, SMS o app) cuando haya avances.
+Chatbot con IA para atención inicial y clasificación de casos.
+4.2. Módulo de Gestión Institucional
+Derivación automática de casos según categoría o dependencia.
+SLA configurables por tipo de solicitud.
+Panel para supervisores con métricas de productividad y cumplimiento.
+Reasignación automática en caso de inactividad o congestión.
+4.3. Módulo Analítico
+Dashboard central con KPIs globales y por institución.
+Reportes de desempeño (tiempos promedio, casos cerrados, satisfacción ciudadana).
+Exportación de datos a Power BI o Data Warehouse.
+4.4. Integraciones requeridas
+Plataforma de autenticación ciudadana nacional
+(SSO con documento de identidad).
+Sistema de mensajería
+(correo, SMS, push).
+Plataformas de terceros
+: redes sociales (Facebook, Twitter/X), WhatsApp Business API.
+APIs de sistemas internos
+(salud, obras públicas, energía).
+5. Requerimientos no funcionales
+6. Desafíos técnicos y de negocio
+1.
+Integración heterogénea:
+Algunas dependencias tienen sistemas antiguos sin APIs; seránecesario definir adaptadores o middleware.
+2.
+Interoperabilidad semántica:
+Estandarizar taxonomías y catálogos de servicios entreinstituciones.
+3.
+Alta disponibilidad geográfica:
+Centros de datos en distintas regiones para asegurarcontinuidad ante desastres.
+4.
+Gestión de identidades complejas:
+Diferenciar usuarios ciudadanos, funcionarios yoperadores con distintos roles.
+5.
+Datos sensibles:
+Protección de información personal y trazabilidad completa de cambios.
+6.
+Balance entre centralización y autonomía:
+Las instituciones deben mantener autonomíaoperativa sin perder visibilidad central.
+7.
+Cambio cultural:
+Los usuarios internos deben adoptar nuevos flujos digitales sin resistencia.
+7. Entregables
+7.1. Diagrama de arquitectura detallado
+Debe mostrar:
+Disponibilidad
+99.9% SLA, con failover automático entre regiones.
+Escalabilidad
+Hasta 500,000 solicitudes diarias concurrentes.
+Seguridad
+Cifrado AES-256, autenticación OAuth2 / OpenIDConnect, segregación por entidad.
+Rendimiento
+<1.5 s de tiempo promedio de respuesta.
+Multitenencia
+Soporte multi-institución, con aislamiento lógico dedatos.
+Integrabilidad
+APIs REST y mensajería asíncrona (Kafka oRabbitMQ).
+Categoría
+Requisito
+Capas del sistema (presentación, aplicación, integración, datos).
+Componentes principales y relaciones.
+Integraciones externas (servicios de mensajería, APIs institucionales, SSO).
+Consideraciones de seguridad, escalabilidad y resiliencia.
+7.2. Diagrama de base de datos
+Modelo conceptual de las entidades principales:
+ciudadanos, casos, dependencias, flujosde atención, auditorías, notificaciones
+.
+Relaciones y cardinalidades.
+Esquema sugerido (ER o UML).
+7.3. Justificación de decisiones tecnológicas
+Debe incluir:
+Tecnologías seleccionadas (lenguajes, frameworks, bases de datos, mensajería, nube oinfraestructura).
+Patrones arquitectónicos aplicados (por ejemplo, microservicios, event-driven, API gateway,CQRS).
+Evaluación de alternativas (por qué se eligieron ciertas tecnologías).
+7.4. Diseño de APIs RESTful y/o asíncronas
+Documentación Swagger/OpenAPI de endpoints principales).
+AsyncAPI para eventos.
+Ejemplos de payloads JSON y respuesta.
+8. Notas
+El objetivo de este ejercicio es evaluar las capacidades de análisis y diseño del candidato.
+La solución puede ser tan ficticia como el país en cuestión.
+Se puede usar cualquier herramienta de diagramación preferida.
+Se valoran ejemplos concretos basados en experiencias reales, especialmente si muestrancómo el candidato ha resuelto problemas similares.
+La solución debe abordar tanto aspectos técnicos como de negocio, reflejando una visióncompleta de cómo la arquitectura respalda los objetivos estratégicos de la organización.
+Se requiere incluir:
+Diagramas claros y legibles.
+Suposiciones documentadas.
+Breve descripción de riesgos y mitigaciones.
+Consideraciones de despliegue y mantenimiento a largo plazo.
+No se evaluará la implementación de código, pero sí la capacidad de estructurar una soluciónlista para desarrollo.
+9. Referencias útiles
+- Estructura de arquitectura de software.
+- Modelado de arquitectura a diferentes niveles de abstracción.
+- Herramienta de generación de diagramas y gráficos a partir de texto.
+- Herramienta de generación de diagramas.
+- Especificación para describir sistemas de comunicación asíncrona.
+- Recurso sobre mejores prácticas en arquitectura de microservicios.
+arc42
+C4 Model
+Mermaid.js
+Draw.io
+AsynAPI
+microservices.io
