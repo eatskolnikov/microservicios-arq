@@ -931,7 +931,7 @@ Topics:
 
 ## Flujo de Eventos - Ejemplo Completo
 
-![images/async-api-flujo-de-eventos.png](async-api-flujo-de-eventos.png)
+![images/async-api-flujo-de-eventos.png](images/async-api-flujo-de-eventos.png)
 
 ## Patrones Aplicados
 

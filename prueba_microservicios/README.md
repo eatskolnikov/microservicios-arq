@@ -734,5 +734,4 @@ El `AuthService` crea automáticamente dos usuarios al iniciar:
 
 ## 👨‍💻 Autor
 
-Sistema de Inventario - Prueba Técnica  
 Implementado con arquitectura de microservicios en .NET 8
