@@ -84,27 +84,7 @@ Este documento describe la estrategia de despliegue, operación y mantenimiento 
 ---
 
 ### Pipeline CI/CD
-
-```mermaid
-graph LR
-    A[Developer<br/>Push Code] --> B[GitHub/GitLab<br/>Source Control]
-    B --> C[CI Pipeline<br/>Tests/Scan]
-    C --> D{Build<br/>Success?}
-    D -->|No| E[Notify Developer]
-    D -->|Yes| F[Build Docker<br/>Images]
-    F --> G[Push to<br/>Container Registry]
-    G --> H{Environment}
-    H -->|Dev| I[Auto Deploy<br/>to Dev]
-    H -->|QA| J[Deploy to QA<br/>Manual Approval]
-    H -->|Staging| K[Deploy to Staging<br/>Manual Approval]
-    H -->|Prod| L[Deploy to Prod<br/>Multiple Approvals]
-    
-    I --> M[Health Checks]
-    J --> M
-    K --> M
-    L --> M
-    M --> N[Monitor & Alert]
-```
+![images/pipeline-ci-cd.png](images/pipeline-ci-cd.png)
 
 #### Etapas del Pipeline
 

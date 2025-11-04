@@ -6,198 +6,15 @@ La arquitectura de Conecta360 está diseñada siguiendo los principios de **micr
 
 ## Diagrama de Arquitectura - Vista de Niveles (C4 Model Level 1)
 
-```mermaid
-graph TB
-    subgraph "Capa de Presentación"
-        WEB[Portal Web<br/>React/Next.js]
-        MOBILE[App Móvil<br/>React Native]
-        CALL[Call Center<br/>UI Web]
-        SOCIAL[Integración Redes<br/>Sociales]
-    end
-
-    subgraph "Capa de API Gateway"
-        GATEWAY[API Gateway<br/>Kong/AWS API Gateway<br/>Rate Limiting, Auth, Routing]
-    end
-
-    subgraph "Capa de Aplicación - Microservicios"
-        MS_AUTH[Servicio de<br/>Autenticación<br/>OAuth2/OIDC]
-        MS_CASOS[Servicio de<br/>Gestión de Casos<br/>Core Domain]
-        MS_NOTIF[Servicio de<br/>Notificaciones<br/>Email/SMS/Push]
-        MS_CHATBOT[Servicio de<br/>Chatbot IA<br/>NLP/ML]
-        MS_ANALYTICS[Servicio de<br/>Analítica<br/>CQRS Read Model]
-        MS_DERIVACION[Servicio de<br/>Derivación<br/>Routing Rules]
-        MS_SLA[Servicio de<br/>Gestión SLA<br/>Monitoring]
-    end
-
-    subgraph "Capa de Integración"
-        ADAPTER[Adaptadores<br/>Legacy Systems<br/>REST/SOAP]
-        SSO[SSO Nacional<br/>Identity Provider]
-        MSG_PROVIDER[Proveedores<br/>Mensajería<br/>Twilio/SendGrid]
-        SOCIAL_API[APIs Redes<br/>Sociales<br/>Facebook/Twitter/WhatsApp]
-    end
-
-    subgraph "Capa de Mensajería Asíncrona"
-        KAFKA[Apache Kafka<br/>Event Streaming<br/>Topics por Dominio]
-        DLQ[Dead Letter Queue<br/>Error Handling]
-    end
-
-    subgraph "Capa de Datos"
-        DB_PRIMARY[(Base de Datos<br/>PostgreSQL<br/>Primary/Read Replicas)]
-        DB_CACHE[(Redis Cache<br/>Sesiones/Tokens)]
-        DB_SEARCH[(Elasticsearch<br/>Búsqueda/Logs)]
-        DB_ANALYTICS[(Data Warehouse<br/>ClickHouse/Redshift<br/>Analytics)]
-    end
-
-    subgraph "Infraestructura y Observabilidad"
-        MONITOR[Prometheus/Grafana<br/>Monitoring]
-        LOGS[ELK Stack<br/>Centralized Logging]
-        TRACE[Jaeger/Zipkin<br/>Distributed Tracing]
-    end
-
-    WEB --> GATEWAY
-    MOBILE --> GATEWAY
-    CALL --> GATEWAY
-    SOCIAL --> GATEWAY
-
-    GATEWAY --> MS_AUTH
-    GATEWAY --> MS_CASOS
-    GATEWAY --> MS_NOTIF
-    GATEWAY --> MS_CHATBOT
-    GATEWAY --> MS_ANALYTICS
-
-    MS_AUTH --> SSO
-    MS_CASOS --> KAFKA
-    MS_NOTIF --> MSG_PROVIDER
-    MS_CHATBOT --> MS_CASOS
-    MS_DERIVACION --> MS_CASOS
-    MS_SLA --> MS_CASOS
-
-    MS_CASOS --> DB_PRIMARY
-    MS_AUTH --> DB_CACHE
-    MS_ANALYTICS --> DB_ANALYTICS
-    MS_CHATBOT --> DB_SEARCH
-
-    MS_CASOS --> ADAPTER
-    KAFKA --> MS_DERIVACION
-    KAFKA --> MS_NOTIF
-    KAFKA --> MS_ANALYTICS
-
-    MS_CASOS -.-> MONITOR
-    MS_CASOS -.-> LOGS
-    MS_CASOS -.-> TRACE
-
-    KAFKA --> DLQ
-```
+![images/C4ModelLevel1.png](images/C4ModelLevel1.png)
 
 ## Diagrama de Arquitectura - Vista de Despliegue (Multi-Región)
 
-```mermaid
-graph TB
-    subgraph "Región A - Producción Principal"
-        LB_A[Load Balancer<br/>AWS ALB/NGINX]
-        subgraph "Availability Zone 1-A"
-            API_GW_A1[API Gateway<br/>Instance 1]
-            MS_CASOS_A1[Microservicios<br/>Auto-scaling Group]
-            DB_A1[(PostgreSQL<br/>Primary)]
-        end
-        subgraph "Availability Zone 2-A"
-            API_GW_A2[API Gateway<br/>Instance 2]
-            MS_CASOS_A2[Microservicios<br/>Auto-scaling Group]
-            DB_A2[(PostgreSQL<br/>Standby)]
-        end
-        KAFKA_A[Kafka Cluster<br/>3 Brokers]
-    end
-
-    subgraph "Región B - Disaster Recovery"
-        LB_B[Load Balancer<br/>AWS ALB/NGINX]
-        subgraph "Availability Zone 1-B"
-            API_GW_B1[API Gateway<br/>Instance 1]
-            MS_CASOS_B1[Microservicios<br/>Auto-scaling Group]
-            DB_B1[(PostgreSQL<br/>Replica)]
-        end
-        subgraph "Availability Zone 2-B"
-            API_GW_B2[API Gateway<br/>Instance 2]
-            MS_CASOS_B2[Microservicios<br/>Auto-scaling Group]
-            DB_B2[(PostgreSQL<br/>Replica)]
-        end
-        KAFKA_B[Kafka Cluster<br/>3 Brokers]
-    end
-
-    subgraph "Región Global - CDN y Caché"
-        CDN[CloudFront/CDN<br/>Static Assets]
-        REDIS_GLOBAL[Redis Global<br/>Multi-region Replication]
-    end
-
-    USERS[Usuarios Ciudadanos] --> CDN
-    CDN --> LB_A
-    CDN -.Failover.-> LB_B
-
-    LB_A --> API_GW_A1
-    LB_A --> API_GW_A2
-    LB_B --> API_GW_B1
-    LB_B --> API_GW_B2
-
-    API_GW_A1 --> MS_CASOS_A1
-    API_GW_A2 --> MS_CASOS_A2
-    API_GW_B1 --> MS_CASOS_B1
-    API_GW_B2 --> MS_CASOS_B2
-
-    MS_CASOS_A1 --> DB_A1
-    MS_CASOS_A2 --> DB_A1
-    MS_CASOS_B1 --> DB_B1
-    MS_CASOS_B2 --> DB_B1
-
-    DB_A1 -.Replication.-> DB_A2
-    DB_A1 -.Replication.-> DB_B1
-    DB_A1 -.Replication.-> DB_B2
-
-    MS_CASOS_A1 --> KAFKA_A
-    MS_CASOS_A2 --> KAFKA_A
-    MS_CASOS_B1 --> KAFKA_B
-    MS_CASOS_B2 --> KAFKA_B
-
-    KAFKA_A -.Replication.-> KAFKA_B
-    MS_CASOS_A1 --> REDIS_GLOBAL
-    MS_CASOS_B1 --> REDIS_GLOBAL
-```
+![images/vista-despliegue-multi-region.png](images/vista-despliegue-multi-region.png)
 
 ## Flujo de Procesamiento de un Caso
 
-```mermaid
-sequenceDiagram
-    participant C as Ciudadano
-    participant GW as API Gateway
-    participant AUTH as Servicio Auth
-    participant CASOS as Servicio Casos
-    participant KAFKA as Kafka
-    participant DERIV as Servicio Derivación
-    participant NOTIF as Servicio Notificaciones
-    participant INST as Sistema Institucional
-    participant DB as Base de Datos
-
-    C->>GW: POST /api/v1/casos (con token)
-    GW->>AUTH: Validar token
-    AUTH-->>GW: Token válido + perfil
-    GW->>CASOS: Crear caso
-    CASOS->>DB: Persistir caso (Write)
-    CASOS-->>GW: Caso creado (ID: 12345)
-    GW-->>C: 201 Created {caso_id: 12345}
-    
-    CASOS->>KAFKA: Publicar evento: CasoCreado
-    KAFKA->>DERIV: Consumir evento
-    DERIV->>DERIV: Evaluar reglas de derivación
-    DERIV->>CASOS: Actualizar caso (dependencia asignada)
-    DERIV->>KAFKA: Publicar: CasoAsignado
-    
-    KAFKA->>NOTIF: Consumir: CasoAsignado
-    NOTIF->>NOTIF: Preparar notificación
-    NOTIF->>C: Enviar SMS/Email
-    
-    DERIV->>INST: Webhook/SOAP a sistema institucional
-    INST-->>DERIV: Acknowledgment
-    
-    Note over KAFKA: Event-Driven Architecture<br/>Desacoplamiento temporal
-```
+![images/flujo-de-procesamiento-de-un-caso.png](images/flujo-de-procesamiento-de-un-caso.png)
 
 ## Capas del Sistema
 
@@ -281,17 +98,8 @@ sequenceDiagram
 ## Seguridad y Compliance
 
 ### Seguridad en Capas
-```mermaid
-graph LR
-    A[WAF/CloudFront] --> B[API Gateway<br/>Rate Limiting]
-    B --> C[Auth Service<br/>OAuth2/OIDC]
-    C --> D[Microservicios<br/>mTLS]
-    D --> E[Base de Datos<br/>Encryption at Rest]
-    
-    F[VPC/Network] --> D
-    G[IAM/Roles] --> D
-    H[Secrets Manager] --> D
-```
+
+![images/seguridad-de-capas.png](images/seguridad-de-capas.png)
 
 ### Consideraciones de Seguridad
 1. **Encriptación en tránsito**: TLS 1.3 en todas las comunicaciones

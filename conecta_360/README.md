@@ -18,13 +18,15 @@
 conecta_360/
 ├── README.md                           # Este archivo
 ├── docs/
+│   ├── 00-GUIA-DIAGRAMAS.md           # Guía para generar diagramas visuales
 │   ├── 01-arquitectura.md             # Diagrama de arquitectura detallado
 │   ├── 02-base-datos.md                # Modelo de base de datos (ER)
 │   ├── 03-decisiones-tecnologicas.md  # Justificación de stack tecnológico
 │   ├── 04-apis-rest.md                 # Diseño de APIs RESTful (OpenAPI)
 │   ├── 05-apis-asincronas.md           # Diseño de APIs asíncronas (AsyncAPI)
 │   ├── 06-supuestos-riesgos.md        # Suposiciones, riesgos y mitigaciones
-│   └── 07-despliegue-mantenimiento.md  # Consideraciones de despliegue y mantenimiento
+│   ├── 07-despliegue-mantenimiento.md  # Consideraciones de despliegue y mantenimiento
+│   └── diagramas/                      # Carpeta para diagramas visuales exportados
 └── requerimientos.txt                  # Requerimientos originales
 ```
 
@@ -52,20 +54,8 @@ La solución está diseñada con una **arquitectura de microservicios** basada e
 - **Message Broker** para comunicación asíncrona
 - **Multi-región** para alta disponibilidad
 
-## Próximos Pasos
-
-Consulte la documentación en la carpeta `docs/` para detalles completos de:
-- Arquitectura técnica detallada
-- Modelo de datos y relaciones
-- Justificación de decisiones tecnológicas
-- Especificaciones de APIs
-- Plan de mitigación de riesgos
-- Estrategia de despliegue y mantenimiento
-
----
-
 **Versión**: 1.0  
-**Fecha**: 2024  
+**Fecha**: 2025  
 **Arquitecto**: Senior Software Architect
 
 
