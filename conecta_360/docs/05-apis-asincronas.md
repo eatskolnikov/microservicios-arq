@@ -931,46 +931,7 @@ Topics:
 
 ## Flujo de Eventos - Ejemplo Completo
 
-```mermaid
-sequenceDiagram
-    participant C as Ciudadano
-    participant API as API Gateway
-    participant MS_Casos as Microservicio Casos
-    participant Kafka as Kafka
-    participant MS_Derivacion as Microservicio Derivación
-    participant MS_Notif as Microservicio Notificaciones
-    participant MS_SLA as Microservicio SLA
-    participant MS_Analytics as Microservicio Analytics
-
-    C->>API: POST /casos
-    API->>MS_Casos: Crear caso
-    MS_Casos->>MS_Casos: Persistir en DB
-    MS_Casos->>Kafka: Publicar: casos.creados
-    
-    par Consumidores paralelos
-        Kafka->>MS_Derivacion: Consumir: casos.creados
-        Kafka->>MS_Notif: Consumir: casos.creados
-        Kafka->>MS_Analytics: Consumir: casos.creados
-    end
-    
-    MS_Derivacion->>MS_Derivacion: Evaluar reglas
-    MS_Derivacion->>MS_Casos: Actualizar caso (asignar)
-    MS_Derivacion->>Kafka: Publicar: casos.asignados
-    
-    par Consumidores de asignación
-        Kafka->>MS_Notif: Consumir: casos.asignados
-        Kafka->>MS_SLA: Consumir: casos.asignados
-        Kafka->>MS_Analytics: Consumir: casos.asignados
-    end
-    
-    MS_SLA->>MS_SLA: Crear SLA y monitorear
-    MS_Notif->>MS_Notif: Preparar notificación
-    MS_Notif->>C: Enviar SMS/Email
-    MS_Notif->>Kafka: Publicar: notificaciones.enviadas
-    
-    Kafka->>MS_Analytics: Consumir: notificaciones.enviadas
-    MS_Analytics->>MS_Analytics: Actualizar métricas
-```
+![images/async-api-flujo-de-eventos.png](images/async-api-flujo-de-eventos.png)
 
 ## Patrones Aplicados
 
